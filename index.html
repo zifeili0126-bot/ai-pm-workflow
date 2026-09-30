@@ -5,35 +5,242 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>原型工作台 · AI 跑通产品全流程</title>
 <style>
-  *,*::before,*::after{box-sizing:border-box}
-  body{margin:0;background:#fafafa;color:#19191a;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:860px;margin:0 auto;padding:72px 24px 96px}
-  h1{font-size:30px;margin:0 0 10px;letter-spacing:-.5px}
-  .sub{color:#707070;font-size:14px;margin:0 0 40px}
-  .card{display:block;background:#fff;border:1px solid #e8e8e8;border-radius:12px;padding:22px 24px;margin-bottom:16px;text-decoration:none;color:inherit;transition:box-shadow .2s ease,transform .2s ease,border-color .2s ease}
-  .card:hover{box-shadow:0 8px 24px rgba(0,0,0,.08);transform:translateY(-2px);border-color:#dcdcdc}
-  .card h2{font-size:17px;margin:0 0 8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .card p{margin:0;font-size:13px;line-height:20px;color:#707070}
-  .tag{display:inline-block;font-size:11px;line-height:16px;color:#10a300;border:1px solid #cdecc9;background:#f2fbf1;border-radius:999px;padding:1px 8px;font-weight:600}
-  footer{margin-top:48px;font-size:12px;color:#9a9a9a}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;display:flex;color:#19191a;background:#fff;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ===== 左侧栏 ===== */
+.sidebar{width:268px;flex-shrink:0;background:#fafafa;border-right:1px solid #e8e8e8;display:flex;flex-direction:column;min-height:0}
+.brand{padding:22px 18px 14px}
+.brand h1{font-size:16px;margin:0 0 5px;letter-spacing:-.2px}
+.brand p{margin:0;font-size:12px;line-height:18px;color:#8a8a8a}
+.search{position:relative;padding:0 14px 12px}
+.search svg{position:absolute;left:25px;top:9px;width:15px;height:15px;color:#a8a8a8}
+.search input{
+  width:100%;height:34px;border:1px solid #e2e2e2;border-radius:8px;background:#fff;
+  padding:0 10px 0 33px;font-size:13px;font-family:inherit;color:#19191a;outline:none;
+}
+.search input:focus{border-color:#c9c9c9}
+.nav{flex:1;overflow-y:auto;padding:2px 8px 14px}
+.group-title{font-size:11px;color:#9d9d9d;letter-spacing:.4px;padding:12px 10px 6px}
+.item{display:block;padding:9px 10px;border-radius:8px;text-decoration:none;color:inherit;cursor:pointer;border:1px solid transparent}
+.item:hover{background:#f1f1f3}
+.item.active{background:#fff;border-color:#eaeaea;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.item .n{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px}
+.item .d{font-size:11px;line-height:17px;color:#8a8a8a;margin-top:4px}
+.dot{width:6px;height:6px;border-radius:50%;background:#10a300;flex-shrink:0}
+.empty{font-size:12px;color:#9d9d9d;padding:12px 10px}
+.side-foot{border-top:1px solid #e8e8e8;padding:13px 18px}
+.side-foot a{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:#707070;text-decoration:none}
+.side-foot a:hover{color:#19191a}
+
+/* ===== 右侧主区 ===== */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0}
+.toolbar{height:56px;flex-shrink:0;display:flex;align-items:center;gap:10px;padding:0 16px;background:#fff;border-bottom:1px solid #e8e8e8}
+.toolbar .name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spacer{flex:1}
+.seg{display:flex;background:#f2f2f4;border-radius:8px;padding:3px;flex-shrink:0}
+.seg button{border:0;background:transparent;font-family:inherit;font-size:12px;color:#5a5a5a;padding:5px 12px;border-radius:6px;cursor:pointer}
+.seg button.on{background:#fff;color:#19191a;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.tbtn{
+  height:32px;min-width:32px;padding:0 10px;border:1px solid #e2e2e2;border-radius:8px;background:#fff;
+  color:#4a4a4a;font-size:12px;font-family:inherit;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;flex-shrink:0;
+}
+.tbtn:hover{border-color:#d0d0d0;color:#19191a}
+.tbtn svg{width:15px;height:15px}
+.stage{flex:1;min-height:0;background:#f0f0f2;padding:16px;display:flex;justify-content:center;overflow:auto}
+.frame{
+  width:100%;height:100%;background:#fff;border-radius:10px;overflow:hidden;
+  box-shadow:0 6px 24px rgba(0,0,0,.10);transition:max-width .25s ease;
+}
+.frame iframe{display:block;width:100%;height:100%;border:0}
+.mobile-bar{display:none}
+
+@media (max-width:880px){
+  body{flex-direction:column}
+  .sidebar{width:100%;border-right:0;border-bottom:1px solid #e8e8e8}
+  .brand{padding:14px 16px 10px}
+  .search,.nav,.side-foot{display:none}
+  .mobile-bar{display:flex;align-items:center;gap:8px;padding:10px 12px;background:#fafafa;border-bottom:1px solid #e8e8e8}
+  .mobile-bar select{flex:1;height:34px;border:1px solid #e2e2e2;border-radius:8px;background:#fff;font-family:inherit;font-size:13px;padding:0 8px}
+  .toolbar{padding:0 12px;gap:8px}
+  .stage{padding:8px}
+}
 </style>
 </head>
 <body>
-  <div class="wrap">
+
+<aside class="sidebar">
+  <div class="brand">
     <h1>原型工作台</h1>
-    <p class="sub">AI 跑通产品全流程 · 所有 HTML 原型都挂在这里</p>
-
-    <a class="card" href="prototypes/fs-live-chat/index.html">
-      <h2>FS 在线客服原型 <span class="tag">可交互</span></h2>
-      <p>复刻 fs.com 的 Live Chat：右下角悬浮气泡、隐私同意页、虚拟助手欢迎语、六个快捷入口、消息气泡与输入框。</p>
-    </a>
-
-    <a class="card" href="https://github.com/zifeili0126-bot/ai-pm-workflow" target="_blank" rel="noopener">
-      <h2>源代码仓库</h2>
-      <p>在 GitHub 上查看所有原型的源文件与提交记录。</p>
-    </a>
-
-    <footer>以后每做一个新原型，这里会多一张卡片。</footer>
+    <p>AI 跑通产品全流程 · 所有 HTML 原型</p>
   </div>
+  <div class="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input id="q" type="search" placeholder="搜索原型…" />
+  </div>
+  <nav class="nav" id="nav"></nav>
+  <div class="side-foot">
+    <a href="https://github.com/zifeili0126-bot/ai-pm-workflow" target="_blank" rel="noopener">
+      <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.93-.89-1.18-.89-1.18-.73-.5.05-.49.05-.49.8.06 1.23.83 1.23.83.71 1.22 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.03 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+      源代码仓库
+    </a>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="toolbar">
+    <span class="name" id="curName">—</span>
+    <span class="spacer"></span>
+    <div class="seg" id="seg">
+      <button data-w="desktop" class="on">桌面</button>
+      <button data-w="tablet">平板</button>
+      <button data-w="phone">手机</button>
+    </div>
+    <button class="tbtn" id="reload" title="刷新原型">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+    </button>
+    <button class="tbtn" id="open" title="在新窗口打开">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 4h6v6"/><path d="M20 4l-8 8"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg>
+    </button>
+  </div>
+
+  <div class="mobile-bar">
+    <select id="mselect"></select>
+  </div>
+
+  <div class="stage">
+    <div class="frame" id="frame"><iframe id="view" title="原型预览"></iframe></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  /* ====== 原型清单：以后新增原型，只改这一段 ====== */
+  var PROTOTYPES = [
+    {
+      id: 'fs-live-chat',
+      name: 'FS 在线客服',
+      desc: '复刻 fs.com 的 Live Chat：悬浮气泡、隐私同意、虚拟助手、快捷入口',
+      group: '电商 / 客服',
+      path: 'prototypes/fs-live-chat/index.html'
+    }
+  ];
+
+  var WIDTHS = { desktop: '100%', tablet: '834px', phone: '390px' };
+
+  var nav = document.getElementById('nav');
+  var view = document.getElementById('view');
+  var frame = document.getElementById('frame');
+  var curName = document.getElementById('curName');
+  var mselect = document.getElementById('mselect');
+  var q = document.getElementById('q');
+  var current = null;
+
+  function esc(s){
+    return String(s).replace(/[&<>"]/g, function(c){
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c];
+    });
+  }
+  function byId(id){
+    for (var i = 0; i < PROTOTYPES.length; i++) if (PROTOTYPES[i].id === id) return PROTOTYPES[i];
+    return null;
+  }
+  function grouped(){
+    var map = {}, order = [];
+    PROTOTYPES.forEach(function(p){
+      if (!map[p.group]) { map[p.group] = []; order.push(p.group); }
+      map[p.group].push(p);
+    });
+    return order.map(function(k){ return { name: k, items: map[k] }; });
+  }
+
+  function renderList(filter){
+    var f = String(filter || '').trim().toLowerCase();
+    nav.innerHTML = '';
+    var shown = 0;
+    grouped().forEach(function(grp){
+      var items = grp.items.filter(function(p){
+        if (!f) return true;
+        return (p.name + ' ' + p.desc).toLowerCase().indexOf(f) >= 0;
+      });
+      if (!items.length) return;
+      var t = document.createElement('div');
+      t.className = 'group-title';
+      t.textContent = grp.name;
+      nav.appendChild(t);
+      items.forEach(function(p){
+        shown++;
+        var a = document.createElement('a');
+        a.className = 'item' + (current && current.id === p.id ? ' active' : '');
+        a.href = '#' + p.id;
+        a.innerHTML = '<div class="n"><span class="dot"></span>' + esc(p.name) + '</div><div class="d">' + esc(p.desc) + '</div>';
+        a.addEventListener('click', function(e){ e.preventDefault(); select(p.id); });
+        nav.appendChild(a);
+      });
+    });
+    if (!shown) {
+      var d = document.createElement('div');
+      d.className = 'empty';
+      d.textContent = '没有匹配的原型';
+      nav.appendChild(d);
+    }
+  }
+
+  function select(id){
+    var p = byId(id) || PROTOTYPES[0];
+    if (!p) return;
+    current = p;
+    curName.textContent = p.name;
+    mselect.value = p.id;
+    if (view.getAttribute('src') !== p.path) view.setAttribute('src', p.path);
+    if (location.hash !== '#' + p.id) history.replaceState(null, '', '#' + p.id);
+    document.title = p.name + ' · 原型工作台';
+    renderList(q.value);
+  }
+
+  /* 设备尺寸切换 */
+  document.getElementById('seg').addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('button') : null;
+    if (!b) return;
+    Array.prototype.forEach.call(this.querySelectorAll('button'), function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    frame.style.maxWidth = WIDTHS[b.getAttribute('data-w')] || '100%';
+  });
+
+  /* 刷新 / 新窗口打开 */
+  document.getElementById('reload').addEventListener('click', function(){
+    try { view.contentWindow.location.reload(); }
+    catch (err) { view.setAttribute('src', current ? current.path : ''); }
+  });
+  document.getElementById('open').addEventListener('click', function(){
+    if (current) window.open(current.path, '_blank');
+  });
+
+  /* 搜索 */
+  q.addEventListener('input', function(){ renderList(q.value); });
+
+  /* 移动端下拉 */
+  PROTOTYPES.forEach(function(p){
+    var o = document.createElement('option');
+    o.value = p.id;
+    o.textContent = p.name;
+    mselect.appendChild(o);
+  });
+  mselect.addEventListener('change', function(){ select(mselect.value); });
+
+  /* 启动：支持用 #原型id 或 ?p=原型id 直达某个原型 */
+  var hashId = (location.hash || '').replace(/^#/, '');
+  var queryId = '';
+  try { queryId = new URLSearchParams(location.search).get('p') || ''; } catch (e) {}
+  var startId = byId(hashId) ? hashId : (byId(queryId) ? queryId : (PROTOTYPES[0] && PROTOTYPES[0].id));
+  select(startId);
+})();
+</script>
 </body>
 </html>
